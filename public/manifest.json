@@ -1,7 +1,7 @@
 {
-    "name": "TransLog Logistics",
-    "short_name": "TransLog",
-    "description": "Enterprise Transport & Delivery Management System",
+    "name": "TransportFlow - University Project",
+    "short_name": "TransportFlow",
+    "description": "Transport & Delivery Management System - University Project",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
