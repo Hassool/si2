@@ -79,7 +79,7 @@ export const POST = withErrorHandler(async (request: Request) => {
     const parsed = createIncidentSchema.safeParse(body);
 
     if (!parsed.success) {
-        console.log('Incident validation failed:', parsed.error.format());
+
         return errorResponse(parsed.error.issues.map(e => e.message).join(', '), 400);
     }
 
