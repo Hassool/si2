@@ -223,16 +223,19 @@ export function DataTable<TData, TValue>({
                             ) : (
                                 <Card className="p-4">
                                     <div className="space-y-2">
-                                        {row.getVisibleCells().slice(0, 3).map((cell) => (
-                                            <div key={cell.id} className="flex flex-col">
-                                                <span className="text-xs text-muted-foreground uppercase font-bold">
-                                                    {flexRender(cell.column.columnDef.header, cell.getContext())}
-                                                </span>
-                                                <span className="text-sm">
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </span>
-                                            </div>
-                                        ))}
+                                        {row.getVisibleCells().slice(0, 3).map((cell) => {
+                                            const header = table.getFlatHeaders().find((h) => h.column.id === cell.column.id)
+                                            return (
+                                                <div key={cell.id} className="flex flex-col">
+                                                    <span className="text-xs text-muted-foreground uppercase font-bold">
+                                                        {header && !header.isPlaceholder && flexRender(header.column.columnDef.header, header.getContext())}
+                                                    </span>
+                                                    <span className="text-sm">
+                                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                    </span>
+                                                </div>
+                                            )
+                                        })}
                                     </div>
                                 </Card>
                             )}
