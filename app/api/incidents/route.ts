@@ -79,11 +79,16 @@ export const POST = withErrorHandler(async (request: Request) => {
     const parsed = createIncidentSchema.safeParse(body);
 
     if (!parsed.success) {
+        console.log('Incident validation failed:', parsed.error.format());
         return errorResponse(parsed.error.issues.map(e => e.message).join(', '), 400);
     }
 
+    // Generate incident number here to avoid validation issues
+    const incidentNumber = await (Incident as any).generateIncidentNumber();
+
     const incident = new Incident({
         ...parsed.data,
+        incidentNumber,
         reportedBy: user.id,
     });
 

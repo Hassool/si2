@@ -1,6 +1,12 @@
 import { v2 as cloudinary } from 'cloudinary';
 
 // Configure Cloudinary
+console.log('Cloudinary Config:', {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY ? 'Present' : 'Missing',
+    api_secret: process.env.CLOUDINARY_API_SECRET ? 'Present' : 'Missing',
+});
+
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -59,8 +65,9 @@ export async function uploadToCloudinary(
             bytes: result.bytes,
             resourceType: result.resource_type,
         };
-    } catch (error) {
-        throw new Error('Failed to upload file to cloud storage');
+    } catch (error: any) {
+        console.error('Cloudinary upload error:', error);
+        throw new Error(`Failed to upload file to cloud storage: ${error.message || 'Unknown error'}`);
     }
 }
 

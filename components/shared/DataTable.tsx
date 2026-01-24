@@ -226,7 +226,7 @@ export function DataTable<TData, TValue>({
                                         {row.getVisibleCells().slice(0, 3).map((cell) => (
                                             <div key={cell.id} className="flex flex-col">
                                                 <span className="text-xs text-muted-foreground uppercase font-bold">
-                                                    {cell.column.columnDef.header as React.ReactNode}
+                                                    {flexRender(cell.column.columnDef.header, cell.getContext())}
                                                 </span>
                                                 <span className="text-sm">
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

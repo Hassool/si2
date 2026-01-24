@@ -21,8 +21,6 @@ const incidentSchema = new Schema<IIncidentDocument>(
     {
         incidentNumber: {
             type: String,
-            unique: true,
-            required: true,
         },
         type: {
             type: String,
@@ -142,10 +140,11 @@ incidentSchema.statics.findUnresolved = function () {
         .sort({ occurredAt: -1 });
 };
 
-// Pre-save: generate incident number
+// Pre-save: generate incident number if missing
 incidentSchema.pre('save', async function () {
     if (!this.incidentNumber) {
-        this.incidentNumber = await (this.constructor as IIncidentModel).generateIncidentNumber();
+        const IncidentModel = this.constructor as any;
+        this.incidentNumber = await IncidentModel.generateIncidentNumber();
     }
 });
 

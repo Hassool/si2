@@ -20,6 +20,7 @@ import {
 // ============================================================================
 
 export const objectIdSchema = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ID format');
+export const optionalObjectIdSchema = z.union([objectIdSchema, z.string().length(0), z.null()]).optional().transform(val => val === "" || val === null ? undefined : val);
 
 export const addressSchema = z.object({
     street: z.string().min(1, 'Street is required'),
@@ -319,10 +320,10 @@ export const recordPaymentSchema = z.object({
 
 export const createIncidentSchema = z.object({
     type: z.nativeEnum(IncidentType),
-    shipment: objectIdSchema.optional(),
-    deliveryTour: objectIdSchema.optional(),
-    vehicle: objectIdSchema.optional(),
-    driver: objectIdSchema.optional(),
+    shipment: optionalObjectIdSchema,
+    deliveryTour: optionalObjectIdSchema,
+    vehicle: optionalObjectIdSchema,
+    driver: optionalObjectIdSchema,
     description: z.string().min(1, 'Description is required'),
     location: z.string().optional(),
     occurredAt: z.coerce.date(),

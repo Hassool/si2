@@ -23,6 +23,8 @@ import {
     FileText,
     Image,
     Loader2,
+    RefreshCw,
+    Eye,
 } from "lucide-react";
 
 export default function IncidentDetailsPage() {
@@ -157,83 +159,134 @@ export default function IncidentDetailsPage() {
                     </Card>
 
                     {/* Related Entities */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-lg">Related Entities</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="grid grid-cols-2 gap-4">
-                                {shipment && (
-                                    <div className="p-3 border rounded-lg">
-                                        <p className="text-xs text-muted-foreground uppercase mb-1 flex items-center gap-1">
-                                            <Package className="h-3 w-3" /> Shipment
-                                        </p>
-                                        <p className="font-mono font-medium">{shipment.shipmentNumber}</p>
-                                        <Button variant="link" className="p-0 h-auto text-sm" onClick={() => router.push(`/agent/shipments/${shipment._id}`)}>
-                                            View Shipment →
-                                        </Button>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {shipment && (
+                            <Card className="hover:border-blue-500/30 transition-colors cursor-pointer group" onClick={() => router.push(`/agent/shipments/${shipment._id}`)}>
+                                <CardHeader className="pb-2">
+                                    <div className="flex items-center justify-between">
+                                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                                            <Package className="h-4 w-4 text-blue-500" />
+                                            Shipment Details
+                                        </CardTitle>
+                                        <ArrowLeft className="h-4 w-4 rotate-180 opacity-0 group-hover:opacity-100 transition-opacity" />
                                     </div>
-                                )}
-                                {driver && (
-                                    <div className="p-3 border rounded-lg">
-                                        <p className="text-xs text-muted-foreground uppercase mb-1 flex items-center gap-1">
-                                            <User className="h-3 w-3" /> Driver
-                                        </p>
-                                        <p className="font-medium">{driver.firstName} {driver.lastName}</p>
-                                        <p className="text-sm text-muted-foreground">{driver.phone}</p>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-1">
+                                        <p className="text-lg font-mono font-bold">{shipment.shipmentNumber}</p>
+                                        <p className="text-sm text-muted-foreground">{shipment.senderName} → {shipment.receiverName}</p>
                                     </div>
-                                )}
-                                {vehicle && (
-                                    <div className="p-3 border rounded-lg">
-                                        <p className="text-xs text-muted-foreground uppercase mb-1 flex items-center gap-1">
-                                            <Truck className="h-3 w-3" /> Vehicle
-                                        </p>
-                                        <p className="font-mono font-medium">{vehicle.registrationNumber}</p>
-                                        <p className="text-sm text-muted-foreground">{vehicle.type}</p>
+                                </CardContent>
+                            </Card>
+                        )}
+                        {driver && (
+                            <Card className="hover:border-green-500/30 transition-colors">
+                                <CardHeader className="pb-2">
+                                    <CardTitle className="text-sm font-bold flex items-center gap-2">
+                                        <User className="h-4 w-4 text-green-500" />
+                                        Driver Assignment
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-1">
+                                        <p className="text-lg font-bold">{driver.firstName} {driver.lastName}</p>
+                                        <p className="text-sm text-muted-foreground">{driver.phone} | ID: {driver.employeeId}</p>
                                     </div>
-                                )}
-                                {tour && (
-                                    <div className="p-3 border rounded-lg">
-                                        <p className="text-xs text-muted-foreground uppercase mb-1">Tour</p>
-                                        <p className="font-mono font-medium">{tour.tourNumber}</p>
-                                        <p className="text-sm text-muted-foreground">{formatDate(tour.date)}</p>
+                                </CardContent>
+                            </Card>
+                        )}
+                        {vehicle && (
+                            <Card className="hover:border-orange-500/30 transition-colors">
+                                <CardHeader className="pb-2">
+                                    <CardTitle className="text-sm font-bold flex items-center gap-2">
+                                        <Truck className="h-4 w-4 text-orange-500" />
+                                        Vehicle Context
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-1">
+                                        <p className="text-lg font-mono font-bold">{vehicle.registrationNumber}</p>
+                                        <p className="text-sm text-muted-foreground">{vehicle.brand} {vehicle.model} ({vehicle.type})</p>
                                     </div>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
+                                </CardContent>
+                            </Card>
+                        )}
+                        {tour && (
+                            <Card className="hover:border-purple-500/30 transition-colors cursor-pointer group" onClick={() => router.push(`/agent/tours/${tour._id}`)}>
+                                <CardHeader className="pb-2">
+                                    <div className="flex items-center justify-between">
+                                        <CardTitle className="text-sm font-bold flex items-center gap-2 text-purple-600">
+                                            <RefreshCw className="h-4 w-4" />
+                                            Delivery Manifest
+                                        </CardTitle>
+                                        <ArrowLeft className="h-4 w-4 rotate-180 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-1">
+                                        <p className="text-lg font-mono font-bold">{tour.tourNumber}</p>
+                                        <p className="text-sm text-muted-foreground">Tour on {formatDate(tour.date)} | {tour.status}</p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        )}
+                    </div>
 
-                    {/* Evidence */}
+                    {/* Evidence Showcase */}
                     {(incident.photos?.length > 0 || incident.documents?.length > 0) && (
-                        <Card>
-                            <CardHeader>
+                        <Card className="bg-zinc-950 border-zinc-900 overflow-hidden">
+                            <CardHeader className="border-b border-zinc-900 pb-4">
                                 <CardTitle className="text-lg flex items-center gap-2">
-                                    <FileText className="h-5 w-5" /> Evidence
+                                    <FileText className="h-5 w-5 text-zinc-500" /> Evidence Logs
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="pt-6 space-y-8">
                                 {incident.photos?.length > 0 && (
-                                    <div className="mb-4">
-                                        <p className="text-sm font-medium mb-2 flex items-center gap-1">
-                                            <Image className="h-4 w-4" /> Photos ({incident.photos.length})
-                                        </p>
-                                        <div className="flex gap-2 flex-wrap">
+                                    <div>
+                                        <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-500 mb-4 flex items-center gap-2">
+                                            <Image className="h-4 w-4" /> Photographic Proof ({incident.photos.length})
+                                        </h3>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                                             {incident.photos.map((photo, idx) => (
-                                                <a key={idx} href={photo} target="_blank" rel="noopener noreferrer">
-                                                    <img src={photo} alt={`Evidence ${idx + 1}`} className="h-20 w-20 object-cover rounded border" />
-                                                </a>
+                                                <div key={idx} className="group relative aspect-square rounded-2xl overflow-hidden border border-zinc-800 bg-zinc-900 transition-all hover:border-zinc-500 shadow-2xl">
+                                                    <img src={photo} alt={`Incident photo ${idx + 1}`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                                    <a 
+                                                        href={photo} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer"
+                                                        className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                                                    >
+                                                        <Eye className="h-8 w-8 text-white" />
+                                                    </a>
+                                                </div>
                                             ))}
                                         </div>
                                     </div>
                                 )}
+                                
                                 {incident.documents?.length > 0 && (
                                     <div>
-                                        <p className="text-sm font-medium mb-2">Documents ({incident.documents.length})</p>
-                                        {incident.documents.map((doc, idx) => (
-                                            <a key={idx} href={doc} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
-                                                <FileText className="h-4 w-4" /> Document {idx + 1}
-                                            </a>
-                                        ))}
+                                        <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-500 mb-4">Supporting Documentation</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            {incident.documents.map((doc, idx) => (
+                                                <a 
+                                                    key={idx} 
+                                                    href={doc} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer" 
+                                                    className="flex items-center gap-3 p-4 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-2xl transition-all group"
+                                                >
+                                                    <div className="p-2 bg-blue-500/10 rounded-xl">
+                                                        <FileText className="h-5 w-5 text-blue-500" />
+                                                    </div>
+                                                    <div className="flex-1 overflow-hidden">
+                                                        <p className="text-sm font-bold truncate">Legal_Doc_{idx + 1}.pdf</p>
+                                                        <p className="text-[10px] text-zinc-500 uppercase">External Source</p>
+                                                    </div>
+                                                    <ArrowLeft className="h-4 w-4 rotate-180 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                </a>
+                                            ))}
+                                        </div>
                                     </div>
                                 )}
                             </CardContent>

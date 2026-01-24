@@ -105,7 +105,7 @@ export function Sidebar({
                 <Button 
                     variant="ghost" 
                     className={cn("w-full justify-start gap-3", collapsed && "px-2")}
-                    onClick={() => signOut()}
+                    onClick={() => signOut({ callbackUrl: "/signin-up" })}
                 >
                     <LogOut size={20} className="text-destructive" />
                     {!collapsed && <span>Logout</span>}
@@ -158,7 +158,7 @@ export function MobileNav() {
                             <Button 
                                 variant="destructive" 
                                 className="w-full h-12 text-lg rounded-xl gap-3"
-                                onClick={() => signOut()}
+                                onClick={() => signOut({ callbackUrl: "/signin-up" })}
                             >
                                 <LogOut size={24} />
                                 Logout

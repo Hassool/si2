@@ -13,6 +13,8 @@ export const POST = withErrorHandler(async (request: Request) => {
     await requireAuth();
 
     const body = await request.json();
+    console.log('Upload request body keys:', Object.keys(body));
+    console.log('Folder:', body.folder);
 
     // Handle multiple files
     if (Array.isArray(body.files)) {

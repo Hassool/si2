@@ -30,6 +30,10 @@ import {
     AlertTriangle,
     Clock,
     Search,
+    User,
+    Truck,
+    Package,
+    MapPin,
 } from "lucide-react";
 
 export default function IncidentsPage() {
@@ -98,57 +102,114 @@ export default function IncidentsPage() {
             accessorKey: "incidentNumber",
             header: "Incident #",
             cell: ({ row }) => (
-                <Button
-                    variant="link"
-                    className="font-mono font-bold p-0 h-auto"
-                    onClick={() => router.push(`/agent/incidents/${row.original._id}`)}
-                >
-                    {row.original.incidentNumber}
-                </Button>
+                <div className="flex flex-col">
+                    <Button
+                        variant="link"
+                        className="font-mono font-bold p-0 h-auto justify-start"
+                        onClick={() => router.push(`/agent/incidents/${row.original._id}`)}
+                    >
+                        {row.original.incidentNumber}
+                    </Button>
+                    <span className="text-[10px] text-muted-foreground uppercase">{row.original.type}</span>
+                </div>
             ),
         },
         {
-            accessorKey: "type",
-            header: "Type",
-            cell: ({ row }) => <IncidentTypeBadge type={row.original.type} size="sm" />,
+            id: "related",
+            header: "Related Entity",
+            cell: ({ row }) => {
+                const inc = row.original;
+                const shipment = inc.shipment as any;
+                const vehicle = inc.vehicle as any;
+                const driver = inc.driver as any;
+                const tour = inc.deliveryTour as any;
+
+                return (
+                    <div className="flex flex-col gap-1 text-xs">
+                        {shipment && (
+                            <div className="flex items-center gap-1" title="Shipment">
+                                <Package className="h-3 w-3 text-blue-500" />
+                                <span className="font-mono">{shipment.shipmentNumber}</span>
+                            </div>
+                        )}
+                        {driver && (
+                            <div className="flex items-center gap-1" title="Driver">
+                                <User className="h-3 w-3 text-green-500" />
+                                <span>{driver.firstName} {driver.lastName}</span>
+                            </div>
+                        )}
+                        {vehicle && (
+                            <div className="flex items-center gap-1" title="Vehicle">
+                                <Truck className="h-3 w-3 text-orange-500" />
+                                <span className="font-mono">{vehicle.registrationNumber}</span>
+                            </div>
+                        )}
+                        {!shipment && !driver && !vehicle && tour && (
+                            <div className="flex items-center gap-1" title="Tour">
+                                <RefreshCw className="h-3 w-3 text-purple-500" />
+                                <span className="font-mono">{tour.tourNumber}</span>
+                            </div>
+                        )}
+                    </div>
+                );
+            }
         },
         {
             accessorKey: "description",
             header: "Description",
             cell: ({ row }) => (
-                <span className="truncate max-w-[200px] block" title={row.original.description}>
-                    {row.original.description.substring(0, 50)}...
-                </span>
+                <div className="max-w-[250px]">
+                    <p className="text-sm line-clamp-2" title={row.original.description}>
+                        {row.original.description}
+                    </p>
+                    {row.original.location && (
+                        <p className="text-[10px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                            <MapPin className="h-2.5 w-2.5" /> {row.original.location}
+                        </p>
+                    )}
+                </div>
             ),
         },
         {
-            accessorKey: "location",
-            header: "Location",
-            cell: ({ row }) => row.original.location || "-",
-        },
-        {
-            accessorKey: "occurredAt",
-            header: "Occurred",
-            cell: ({ row }) => formatDateTime(row.original.occurredAt),
+            accessorKey: "photos",
+            header: "Evidence",
+            cell: ({ row }) => {
+                const photos = row.original.photos || [];
+                if (photos.length === 0) return <span className="text-muted-foreground text-xs italic">No images</span>;
+                return (
+                    <div className="flex -space-x-2 overflow-hidden">
+                        {photos.slice(0, 3).map((photo, i) => (
+                            <div key={i} className="relative h-8 w-8 rounded-full border-2 border-background ring-2 ring-muted overflow-hidden bg-muted">
+                                <img src={photo} alt="" className="h-full w-full object-cover" />
+                            </div>
+                        ))}
+                        {photos.length > 3 && (
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-background bg-muted text-[10px] font-bold">
+                                +{photos.length - 3}
+                            </div>
+                        )}
+                    </div>
+                );
+            }
         },
         {
             accessorKey: "status",
             header: "Status",
-            cell: ({ row }) => <IncidentStatusBadge status={row.original.status} size="sm" />,
+            cell: ({ row }) => (
+                <div className="flex flex-col gap-1">
+                    <IncidentStatusBadge status={row.original.status} size="sm" />
+                    <span className="text-[10px] text-muted-foreground">{formatDate(row.original.occurredAt)}</span>
+                </div>
+            ),
         },
         {
             id: "actions",
-            header: "Actions",
+            header: "",
             cell: ({ row }) => (
-                <div className="flex gap-1">
+                <div className="flex justify-end gap-1">
                     <Button variant="ghost" size="icon" onClick={() => router.push(`/agent/incidents/${row.original._id}`)}>
                         <Eye className="h-4 w-4" />
                     </Button>
-                    {row.original.status !== IncidentStatus.RESOLVED && row.original.status !== IncidentStatus.CLOSED && (
-                        <Button variant="ghost" size="icon" onClick={() => setResolveIncident(row.original)}>
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                        </Button>
-                    )}
                     <Button variant="ghost" size="icon" className="text-red-600" onClick={() => setDeleteId(row.original._id.toString())}>
                         <Trash2 className="h-4 w-4" />
                     </Button>

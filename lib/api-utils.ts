@@ -73,6 +73,7 @@ export function withErrorHandler(handler: RouteHandler): RouteHandler {
         try {
             return await handler(request, context);
         } catch (error) {
+            console.error('API Error:', error);
 
             if (error instanceof ZodError) {
                 const messages = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`);
